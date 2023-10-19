@@ -1,31 +1,16 @@
-import PocketBase from 'pocketbase';
-import { useEffect, useState } from 'react';
-
-const url = 'https://bitter-cricket.pockethost.io/'
-const client = new PocketBase(url)
-
-async function getRecords() {
-  const records = await client.collection('users').getFullList({
-    sort: '-created',
-  });
-  return records;
-}
+import Link from "next/link";
 
 export default function Home() {
-  const [records, setRecords] = useState(null);
-
-  useEffect(() => {
-    getRecords().then(data => setRecords(data));
-  }, []);
-
   return (
     <main>
-      Ja hej
-      {records && records.map(record => (
-        <div key={record.id}>
-          {/* Render your record data here */}
-        </div>
-      ))}
+      <ul className="flex justify-evenly text-xl font-semibold text-white w-full">
+        <li><Link href="/">Home</Link></li>
+        <li><Link href="/api/auth/signin">Sign In</Link></li>
+        <li><Link href="/api/auth/signout">Sign Out</Link></li>
+        <li><Link href="/server">Server</Link></li>
+        <li><Link href="/client">Client</Link></li>
+        <li><Link href="/extra">Extra</Link></li>
+      </ul>
     </main>
   )
 }

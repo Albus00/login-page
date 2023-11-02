@@ -4,10 +4,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -16,7 +13,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Alert } from '@mui/material';
 import { useState } from 'react';
 import { green, yellow } from '@mui/material/colors';
-import { signIn } from 'next-auth/react';
+import { signIn } from '../lib/pocketbase';
+import { useRouter } from 'next/navigation';
 
 const theme = createTheme({
   palette: {
@@ -30,29 +28,30 @@ const theme = createTheme({
 });
 
 export default function SignInField() {
-  const [errorMsg, setErrorMsg] = useState("")
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
+  const { push } = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // Prevents page from refreshing
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
 
-    try {
-      if (data.get('email') != "" && data.get('password') != "") {
-        signIn("credentials", { username: data.get('email'), password: data.get('password') })
+    if (username != "" && password != "") {
+      if (await signIn(username, password)) {
+        // Redirect user to homepage
+        try {
+          push('/');
+        } catch (error) {
+          console.error(error);
+        }
       }
-      else
-        throw 'Fill out all fields';
-
-    } catch (e: any) {
-      console.log(e);
-      setErrorMsg(e);
+      else {
+        setErrorMsg('Wrong email/username or password');
+      }
     }
-
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    else
+      setErrorMsg('Fill out all fields');
   };
 
   return (
@@ -83,6 +82,10 @@ export default function SignInField() {
               id="email"
               label="Email Address"
               name="email"
+              value={username}
+              onChange={(event) =>
+                setUsername(event.target.value)
+              }
               autoComplete="email"
               autoFocus
             />
@@ -94,6 +97,10 @@ export default function SignInField() {
               label="Password"
               type="password"
               id="password"
+              value={password}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
               autoComplete="current-password"
             />
             <Button

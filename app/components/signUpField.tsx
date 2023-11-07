@@ -28,32 +28,48 @@ const theme = createTheme({
 });
 
 export default function SignUpField() {
-  const [name, setName] = useState(['', '']);
+  const [fName, setFName] = useState('');
+  const [lName, setLName] = useState('');
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [password1, setPassword1] = useState('');
+  const [password2, setPassword2] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const { push } = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // Prevents page from refreshing
     event.preventDefault();
+    if (fName == '' || lName == '') {
+      setErrorMsg("Please input your full name.");
+      return;
+    }
 
-    if (username != "" && password != "") {
-      if (await signUp(name[0], name[1], email, username, password)) {
-        // Redirect user to homepage
-        try {
-          push('/');
-        } catch (error) {
-          console.error(error);
-        }
-      }
-      else {
-        setErrorMsg('Wrong email/username or password');
+    if (email == '') {
+      setErrorMsg("Please input your email.");
+      return;
+    }
+
+    if (password1 == '') {
+      setErrorMsg("Please input a password.");
+      return;
+    }
+    else if (password2 != password1) {
+      setErrorMsg("Passwords do not match.");
+      return;
+    }
+
+    if (await signUp(fName, lName, email, password1)) {
+      // Redirect user to homepage
+      try {
+        push('/');
+      } catch (error) {
+        console.error(error);
       }
     }
-    else
-      setErrorMsg('Fill out all fields');
+    else {
+      setErrorMsg('Wrong email and/or password');
+    }
+
   };
 
   return (
@@ -72,7 +88,7 @@ export default function SignUpField() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Sign up
           </Typography>
           {errorMsg.length > 0 ?
             <Alert severity="error">{errorMsg}</Alert> : null}
@@ -81,12 +97,40 @@ export default function SignUpField() {
               margin="normal"
               required
               fullWidth
+              id="f_name"
+              label="First name"
+              name="f_name"
+              value={fName}
+              onChange={(event) =>
+                setFName(event.target.value)
+              }
+              autoComplete="f-name"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="l_name"
+              label="Last name"
+              name="l_name"
+              value={lName}
+              onChange={(event) =>
+                setLName(event.target.value)
+              }
+              autoComplete="l-name"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
               id="email"
               label="Email Address"
               name="email"
-              value={username}
+              value={email}
               onChange={(event) =>
-                setUsername(event.target.value)
+                setEmail(event.target.value)
               }
               autoComplete="email"
               autoFocus
@@ -95,13 +139,27 @@ export default function SignUpField() {
               margin="normal"
               required
               fullWidth
-              name="password"
+              name="password1"
               label="Password"
               type="password"
-              id="password"
-              value={password}
+              id="password1"
+              value={password1}
               onChange={(event) =>
-                setPassword(event.target.value)
+                setPassword1(event.target.value)
+              }
+              autoComplete="current-password"
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Confirm password"
+              type="password"
+              id="password2"
+              value={password2}
+              onChange={(event) =>
+                setPassword2(event.target.value)
               }
               autoComplete="current-password"
             />
@@ -111,10 +169,10 @@ export default function SignUpField() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Sign Up
             </Button>
             <Link href="#" variant="body2">
-              Don&#39;t have an account? Sign up!
+              Already have an account? Sign in here!
             </Link>
           </Box>
         </Box>

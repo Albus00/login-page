@@ -1,6 +1,6 @@
-import SignInField from "@/app/components/signUpField"
+import SignUpField from "@/app/components/signUpField"
 
-export default function Home() {
+export default function Page() {
 
   return (
     <main>

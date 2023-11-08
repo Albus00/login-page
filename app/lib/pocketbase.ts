@@ -7,20 +7,20 @@ const pb = new PocketBase(url)
 
 const cookies = new Cookies();
 
-export async function signIn(username: string, password: string) {  
-  const user = await pb.collection('users').authWithPassword(username, password);
-  
-  // User not found
-  if (user == null) {
+export async function signIn(username: string, password: string) { 
+  try {
+    const user = await pb.collection('users').authWithPassword(username, password);
+    
+    // Save user login and IP to cookies
+    cookies.set('user', user, { path: '/' });
+    cookies.set('userIP', await getUserIP(), { path: '/' });
+    return true;
+    
+  } catch (err) {
+    // User not found
     return false;
   }
 
-  // Save user login and IP to cookies
-  cookies.set('user', user, { path: '/' });
-  cookies.set('userIP', await getUserIP(), { path: '/' });
-  
-
-  return true;
 }
 
 export async function signUp(firstName: string, lastName: string, email: string, password: string) {
@@ -35,13 +35,13 @@ export async function signUp(firstName: string, lastName: string, email: string,
 
   try {
     const createdUser = await pb.collection('users').create(data);
-  } catch (error) {
-    console.log(error);
-    
+    await signIn(email, password);
+    return true;
+  } catch (err: any) {
+    console.log(err.message);
+    return false;
   }
-  await signIn(email, password);
 
-  return true;
 }
 
 export function signOut() {

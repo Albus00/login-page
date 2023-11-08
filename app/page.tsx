@@ -10,6 +10,9 @@ import Container from "@mui/material/Container";
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
+import theme from '@/app/lib/theme'
+import DefaultHome from "./components/DefaultHome";
+import ProfileHome from "./components/ProfileHome";
 
 
 
@@ -26,6 +29,7 @@ export default function Page() {
       // Mount components depending on cookies after render, to avoid hydration error
       const cookies = new Cookies();
       if (cookies.get('user') != null && cookies.get('userIP') != null) {
+
 
         // Check if user is logged in on the same IP as previously
         if (cookies.get('userIP') != userIP) {
@@ -62,36 +66,7 @@ export default function Page() {
 
       {user == "loading" ? (
         <div className="lds-ring"><div></div><div></div><div></div><div></div></div>)
-        : user != "unset" ? (
-          <div>
-            <ThemeProvider theme={theme}>
-              <Container component="main" maxWidth="xs">
-                <CssBaseline />
-                <Box
-                  sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
-                  </Avatar>
-                  <Typography component="h1" variant="h5">
-                    Sign in
-                  </Typography>
-              </Container>
-            </ThemeProvider>
-            <p>{user}</p>
-            <button onClick={() => signOutHandler()} >Sign out</button>
-          </div>
-        ) : (
-          <div>
-            <Link href="/account/sign-in">Sign in</Link><br />
-            <Link href="/account/sign-up">I don&apos;t have an account</Link><br />
-          </div>
-        )}
+        : user == "unset" ? <DefaultHome /> : <ProfileHome user={user} signOutHandler={signOutHandler} />}
 
     </main>
   )

@@ -9,24 +9,13 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import { Alert } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { green, yellow } from '@mui/material/colors';
-import { signIn, signUp } from '../lib/pocketbase';
+import { signUp } from '../lib/pocketbase';
 import { useRouter } from 'next/navigation';
 import Cookies from 'universal-cookie';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: green[800],
-    },
-    secondary: {
-      main: yellow[600],
-    },
-  },
-});
+import theme from '@/app/lib/theme'
 
 export default function SignUpField() {
   const cookies = new Cookies();

@@ -1,11 +1,11 @@
-import SignInField from "@/app/components/signInField"
+import LoginHandler from "@/app/components/LoginHandler";
 
 export default function Page() {
 
   return (
     <main>
 
-      <SignInField />
+      <LoginHandler />
 
     </main>
   )

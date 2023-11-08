@@ -1,6 +1,6 @@
 import PocketBase from 'pocketbase';
 import Cookies from 'universal-cookie';
-import getUserIP from '../hooks/getUserIP';
+import getUserIP from '../hooks/useGetUserIP';
 
 const url = 'https://bitter-cricket.pockethost.io/'
 const pb = new PocketBase(url)
@@ -42,9 +42,11 @@ export async function signUp(firstName: string, lastName: string, email: string,
     return false;
   }
 
+  //TODO: Hash password
+
 }
 
-export function signOut() {
-  cookies.remove('user');
-  cookies.remove('userIP');
+export async function signOut() {
+  cookies.remove('user', { path: '/' });
+  cookies.remove('userIP', { path: '/' });
 }

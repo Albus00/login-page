@@ -16,13 +16,18 @@ import { FormEventHandler, useState } from 'react';
 
 type Props = {
   errorMsg: string
-  setData: Function
-  handleSubmit: FormEventHandler<HTMLFormElement>
+  handleInputData: Function
 }
 
 const LoginField = (props: Props) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // Prevents page from refreshing
+    event.preventDefault();
+    props.handleInputData({ email: email, password: password });
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -44,11 +49,7 @@ const LoginField = (props: Props) => {
           </Typography>
           {props.errorMsg.length > 0 ?
             <Alert severity="error">{props.errorMsg}</Alert> : null}
-          <Box component="form"
-            onSubmit={() => {
-              props.setData({ username: username, password: password });
-              props.handleSubmit;
-            }} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -56,9 +57,9 @@ const LoginField = (props: Props) => {
               id="email"
               label="Email Address"
               name="email"
-              value={username}
+              value={email}
               onChange={(event) =>
-                setUsername(event.target.value)
+                setEmail(event.target.value)
               }
               autoComplete="email"
               autoFocus

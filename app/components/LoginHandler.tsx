@@ -5,6 +5,7 @@ import { signIn } from '../lib/pocketbase';
 import { useRouter } from 'next/navigation';
 import Cookies from 'universal-cookie';
 import LoginField from './LoginField'
+import Loader from './Loader';
 
 export default function LoginHandler() {
   const { push } = useRouter();
@@ -27,19 +28,18 @@ export default function LoginHandler() {
   }, [push])
 
   const [errorMsg, setErrorMsg] = useState("");
-  const [data, setData] = useState({ username: "", password: "" });
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    // Prevents page from refreshing
-    event.preventDefault();
-    console.log(data);
 
-    // TODO:Fix sign in reloading without signing in
+  async function handleInputData(data: { email: string, password: string }) {
+    // Show loading animation
+    setUser("loading");
 
-    if (data.username != "" && data.password != "") {
-      if (await signIn(data.username, data.password)) {
-        // Redirect user to homepage
+    if (data.email != "" && data.password != "") {
+
+      if (await signIn(data.email, data.password)) {
+        //Redirect user to homepage
         try {
           push('/');
+          return
         } catch (error) {
           console.error(error);
         }
@@ -50,13 +50,15 @@ export default function LoginHandler() {
     }
     else
       setErrorMsg('Fill out all fields');
+
+    // Return to form if user is not authenticated
+    setUser("unset");
+
   };
 
   return (
-    user == "loading" ? (
-      <div className="lds-ring"><div></div><div></div><div></div><div></div></div>)
-      : user == "unset" ? (
-        <LoginField errorMsg={errorMsg} handleSubmit={handleSubmit} setData={setData} />)
-        : (null)
+    user == "loading" ? <Loader /> :
+      user == "unset" ? <LoginField errorMsg={errorMsg} handleInputData={handleInputData} /> :
+        (null)
   );
 }

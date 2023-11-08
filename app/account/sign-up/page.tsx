@@ -1,11 +1,11 @@
-import SignUpField from "@/app/components/signUpField"
+import SignUpHandler from "@/app/components/signUpHandler"
 
 export default function Page() {
 
   return (
     <main>
 
-      <SignUpField />
+      <SignUpHandler />
 
     </main>
   )

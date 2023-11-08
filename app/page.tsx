@@ -4,7 +4,7 @@ import Cookies from "universal-cookie";
 import { signOut } from "./lib/pocketbase";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import getUserIP from "./hooks/getUserIP";
+import getUserIP from "./hooks/useGetUserIP";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import Container from "@mui/material/Container";
 import Button from '@mui/material/Button';
@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 import theme from '@/app/lib/theme'
 import DefaultHome from "./components/DefaultHome";
 import ProfileHome from "./components/ProfileHome";
+import Loader from "./components/Loader";
 
 
 
@@ -24,11 +25,14 @@ export default function Page() {
   useEffect(() => {
     // Wait for the current IP to be fetched
     waitForIP().then(() => {
-      console.log("Current IP: " + userIP);
-
       // Mount components depending on cookies after render, to avoid hydration error
       const cookies = new Cookies();
-      if (cookies.get('user') != null && cookies.get('userIP') != null) {
+
+      if (user == 'signed-out') {
+        cookies.update();
+      }
+
+      if (cookies.get('user') != undefined && cookies.get('userIP') != undefined) {
 
 
         // Check if user is logged in on the same IP as previously
@@ -43,7 +47,6 @@ export default function Page() {
           }
         }
 
-        console.log(cookies.get('user').record.first_name);
         setUser(cookies.get('user').record.first_name);
       }
       else
@@ -53,8 +56,8 @@ export default function Page() {
   })
 
   function signOutHandler() {
+    setUser("unset");
     signOut();
-    window.location.reload();
   }
 
   async function waitForIP() {
@@ -64,9 +67,9 @@ export default function Page() {
   return (
     <main>
 
-      {user == "loading" ? (
-        <div className="lds-ring"><div></div><div></div><div></div><div></div></div>)
-        : user == "unset" ? <DefaultHome /> : <ProfileHome user={user} signOutHandler={signOutHandler} />}
+      {user == "loading" ? <Loader /> :
+        user == "unset" ? <DefaultHome /> :
+          <ProfileHome user={user} signOutHandler={signOutHandler} />}
 
     </main>
   )

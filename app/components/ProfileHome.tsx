@@ -9,6 +9,7 @@ type Props = {
 }
 
 const ProfileHome = (props: Props) => {
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">

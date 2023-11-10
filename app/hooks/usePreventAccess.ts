@@ -1,18 +1,19 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Cookies from "universal-cookie";
+import { pb } from '../lib/pocketbase';
 
 function usePreventAccess(setUser: Function) {
   const { push } = useRouter();
 
   useEffect(() => {
     const cookies = new Cookies();
-  
+
     // Stop the user from accessing sign up if they're already logged in
-    if (cookies.get('user') != null) {
-       // Set user to activate loading screen
+    if (pb.authStore.isValid) {
+      // Set user to activate loading screen
       setUser(cookies.get('user'));
-  
+
       // Navigate user to homepage
       try {
         push('/');

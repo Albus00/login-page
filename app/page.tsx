@@ -14,6 +14,7 @@ import theme from '@/app/lib/theme'
 import DefaultHome from "./components/DefaultHome";
 import ProfileHome from "./components/ProfileHome";
 import Loader from "./components/Loader";
+import { pb } from "./lib/pocketbase";
 
 
 
@@ -28,13 +29,8 @@ export default function Page() {
       // Mount components depending on cookies after render, to avoid hydration error
       const cookies = new Cookies();
 
-      if (user == 'signed-out') {
-        cookies.update();
-      }
-
-      if (cookies.get('user') != undefined && cookies.get('userIP') != undefined) {
-
-
+      // Check if the user is signed in
+      if (pb.authStore.isValid) {
         // Check if user is logged in on the same IP as previously
         if (cookies.get('userIP') != userIP) {
           // Clear the cookies and redirect user to sign in page if IP does not match
@@ -47,7 +43,8 @@ export default function Page() {
           }
         }
 
-        setUser(cookies.get('user').record.first_name);
+        // Get user name
+        setUser(cookies.get('user'));
       }
       else
         setUser("unset"); // User is not logged in, display sign in screen

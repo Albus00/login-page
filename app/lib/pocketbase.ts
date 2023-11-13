@@ -43,8 +43,6 @@ export async function signUp(firstName: string, lastName: string, email: string,
     return false;
   }
 
-  //TODO: Hash password
-
 }
 
 export async function signOut() {
